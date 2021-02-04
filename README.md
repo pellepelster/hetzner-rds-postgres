@@ -319,6 +319,13 @@ services:
     ports:
       - "5432"
 
+  rds-test1-no-instance-id:
+    image: hetzner-rds-postgres
+    environment:
+      - "DB_PASSWORD=password1"
+    ports:
+      - "5432"
+
 volumes:
   rds-data:
   rds-backup:
@@ -374,9 +381,8 @@ Now we can trigger the backup using the generated backup script inside the conta
     }
     @compose.rm('rds-test1', force: true)
     remove_data_volume
-
-    @compose.up('rds-test1', detached: true)
 ```
+
 <!-- /snippet:test_restore_destroy -->
 
 On the subsequent start we expect scenario 3 to kick in and restore all of our data, which we can verify by trying to read the initially generated data again:
@@ -457,21 +463,7 @@ where we then proceed to mount the two volumes, and ensure that the folders grou
 
 <!-- snippet:terraform_data_volumes_mount -->
 ```
-function mount_storage_backup {
-    echo "${storage_device_backup} /storage/backup   ext4   defaults  0 0" >> /etc/fstab
-    mkdir -p "/storage/backup"
-    mount "/storage/backup"
 
-    chown 4000:4000 "/storage/backup"
-}
-
-function mount_storage_data {
-    echo "${storage_device_data} /storage/data   ext4   defaults  0 0" >> /etc/fstab
-    mkdir -p "/storage/data"
-    mount "/storage/data"
-
-    chown 4000:4000 "/storage/data"
-}
 ```
 
 <!-- /snippet:terraform_data_volumes_mount -->
@@ -488,6 +480,7 @@ services:
     image: docker.pkg.github.com/pellepelster/hetzner-rds-postgres/hetzner-rds-postgres:latest
     environment:
       - "DB_DATABASE=${rds_instance_id}"
+      - "DB_PASSWORD=very-secret"
     ports:
       - "5432:5432"
     volumes:
@@ -624,6 +617,39 @@ and
 ```
 ./do infra-instance apply
 ```
+
+When the apply is finished you will be greeted with an ip address:
+
+```
+hcloud_server.instance: Destruction complete after 1s
+hcloud_server.instance: Creating...
+hcloud_server.instance: Creation complete after 8s [id=9891886]
+hcloud_floating_ip_assignment.ip_assignment: Creating...
+hcloud_volume_attachment.data: Creating...
+hcloud_volume_attachment.backup: Creating...
+hcloud_floating_ip_assignment.ip_assignment: Creation complete after 1s [id=408320]
+hcloud_volume_attachment.backup: Creation complete after 3s [id=9275768]
+hcloud_volume_attachment.data: Creation complete after 6s [id=9275769]
+
+Apply complete! Resources: 4 added, 0 changed, 4 destroyed.
+
+Outputs:
+
+public_ip = "78.46.253.164"
+```
+
+behind this address out shiny new RDS service is listening for requests, and can be contacted with:
+
+```
+psql --host 78.46.253.164 --user instance1
+Password for user instance1:
+psql (12.5 (Ubuntu 12.5-0ubuntu0.20.10.1), server 11.9 (Debian 11.9-0+deb10u1))
+Type "help" for help.
+
+instance1=> 
+```
+
+Have Fun!
 
 # Where to go from here
 

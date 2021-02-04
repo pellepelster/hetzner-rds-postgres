@@ -1,7 +1,7 @@
 {{ if .IsFullFile }}
-{{`{{< github repository="pellepelster/vault-ssh-ca"`}} file="{{.Filename}}"  >}}{{.Filename}}{{`{{< /github >}}`}}
+{{`{{< github repository="pellepelster/hetzner-rds-postgres"`}} file="{{.Filename}}"  >}}{{.Filename}}{{`{{< /github >}}`}}
 {{ else }}
-{{`{{< github repository="pellepelster/vault-ssh-ca"`}} file="{{.Filename}}#L{{.Start}}-L{{.End}}"  >}}{{.Filename}}{{`{{< /github >}}`}}
+{{`{{< github repository="pellepelster/hetzner-rds-postgres"`}} file="{{.Filename}}#L{{.Start}}-L{{.End}}"  >}}{{.Filename}}{{`{{< /github >}}`}}
 {{ end }}
 {{`{{< highlight go "" >}}`}}
 {{.Content}}

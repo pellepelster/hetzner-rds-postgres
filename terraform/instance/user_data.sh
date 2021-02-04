@@ -67,8 +67,7 @@ function install_prerequisites {
 function configure_ufw {
   ufw enable
   ufw allow ssh
-  ufw allow http
-  ufw allow https
+  ufw allow 5432
 }
 
 # snippet:rds_service_backup_systemd_config
@@ -144,6 +143,7 @@ services:
     image: docker.pkg.github.com/pellepelster/hetzner-rds-postgres/hetzner-rds-postgres:latest
     environment:
       - "DB_DATABASE=${rds_instance_id}"
+      - "DB_PASSWORD=very-secret"
     ports:
       - "5432:5432"
     volumes:
