@@ -18,6 +18,13 @@ services:
     ports:
       - "5432"
 
+  rds-test1-no-instance-id:
+    image: hetzner-rds-postgres
+    environment:
+      - "DB_PASSWORD=password1"
+    ports:
+      - "5432"
+
 volumes:
   rds-data:
   rds-backup:

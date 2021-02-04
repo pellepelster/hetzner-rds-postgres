@@ -1,6 +1,6 @@
 FROM debian:buster-slim
 
-ENV DB_INSTANCE_ID="instance1"
+ENV DB_INSTANCE_ID=""
 ENV DB_PASSWORD=""
 
 ENV USER=rds

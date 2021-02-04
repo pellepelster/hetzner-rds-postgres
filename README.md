@@ -703,6 +703,13 @@ services:
     ports:
       - "5432"
 
+  rds-test1-no-instance-id:
+    image: hetzner-rds-postgres
+    environment:
+      - "DB_PASSWORD=password1"
+    ports:
+      - "5432"
+
 volumes:
   rds-data:
   rds-backup:
@@ -971,7 +978,11 @@ EOF
 
 # Try it out
 
-If you want to try out what we just built, [https://github.com/pellepelster/hetzner-rds-postgres](https://github.com/pellepelster/hetzner-rds-postgres) not only contains all sources, but also a bash script with some tasks to build and test everything.
+If you want to try out what we just built, [https://github.com/pellepelster/hetzner-rds-postgres](https://github.com/pellepelster/hetzner-rds-postgres) not only contains all sources, but also a bash script with some tasks to build and test everything:
+
+```
+git clone --recurse-submodules https://github.com/pellepelster/hetzner-rds-postgres.git
+```
 
 To build the docker image run: 
 
@@ -979,13 +990,13 @@ To build the docker image run:
 ./do build
 ```
 
-and to run the test (not surprisingly)
+and to run the tests (not surprisingly):
 
 ```
 ./do test
 ```
 
-The deploy part is a little bit trickier, as you have to upload the docker images to a registry, the easyiest way to do this os propbaly to fork the project on Github and use the docker registry provided by Github, by changing the  the configuration in the `do` file to point to your fork:
+The deploy part is a little bit trickier, as you have to upload the docker images to a registry, the easiest way to do this os propably to fork the project on Github and use the docker registry provided by Github. Don't forget to change the configuration in the `do` file to point to your fork:
 
 ```
 GITHUB_OWNER="pellepelster"

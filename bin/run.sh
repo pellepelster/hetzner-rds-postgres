@@ -2,6 +2,11 @@
 
 set -o pipefail -o errexit -o nounset
 
+if [ -z "${DB_INSTANCE_ID}" ]; then
+  echo "DB_INSTANCE_ID not set or empty, exiting"
+  exit 1
+fi
+
 export DB_USERNAME=${DB_USERNAME:-$DB_INSTANCE_ID}
 export DB_DATABASE=${DB_DATABASE:-$DB_INSTANCE_ID}
 

@@ -64,6 +64,14 @@ describe 'hetzner-rds-postgres' do
   end
 
   it 'can connect with user test1 to database test1' do
+    @compose.up('rds-test1-no-instance-id', detached: true)
+
+    wait_while {
+      !@compose.logs('rds-test1-no-instance-id').include? 'DB_INSTANCE_ID not set or empty, exiting'
+    }
+  end
+
+  it 'can connect with user test1 to database test1' do
     host, port = clean_start('rds-test1')
     conn = PG::Connection.new(host, port, '', '', 'test1', 'test1', 'password1')
     conn.exec('SELECT version();')
@@ -78,8 +86,6 @@ describe 'hetzner-rds-postgres' do
       conn.exec('SELECT version();')
       conn.close
     end
-
-    assert_match /fe_sendauth: no password supplied/, err.message
   end
 
   it 'does not allow empty passwords' do
