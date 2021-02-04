@@ -295,7 +295,7 @@ exec ${POSTGRES_BIN_DIR}/postgres -D "${INSTANCE_DATA_DIR}"
 
 Now that we have a dockerized implementation of our shiny new service, we are in the lucky position that we can start the container locally and verify that everything works as expected. 
 
-[minitest](https://github.com/seattlerb/minitest) will serve as testing framework, taking care of starting and stopping the test containers and orchestrating the tests. Base for the test is a docker compose environment where we configure the username and password for our test instance. Docker volumes will be used as stand-in doubles for the bind mounts in the real world:  
+[minitest](https://github.com/seattlerb/minitest) will serve as testing framework, taking care of starting and stopping the test containers and orchestrating the tests. Base for the test is a docker-compose environment where we configure the username and password for our test instance. Docker volumes will be used as stand-in doubles for the bind mounts in the real world:  
 
 <!-- file:test/rds/docker-compose.yml -->
 ```
@@ -327,7 +327,7 @@ volumes:
 
 <!-- /file:test/rds/docker-compose.yml -->
 
-Two helper methods let us destroy the volumes on request, so we can simulate different failure modes and ensure the backup and restore strategy works as intended:
+Two helper methods let us destroy the volumes on request, so we can simulate different failure modes and ensure the backup and restore strategy work as intended:
 
 <!-- snippet:test_volume_helper -->
 ```
@@ -398,13 +398,13 @@ On the subsequent start we expect scenario 3 to kick in and restore all of our d
 
 # Deployment
 
-For the sake of simplicity we will only focus on the [cloud init](https://cloudinit.readthedocs.io/en/latest/) configuration used to spin up the docker container. The supplied terraform configuration is only intended for showcasing this blogpost, in the real world we would not deploy a database with a public available port, but rather resort to a private network where only the application server instances are allowed to access the database. 
+For the sake of simplicity we will only focus on the [cloud init](https://cloudinit.readthedocs.io/en/latest/) configuration used to spin up the docker container. The supplied terraform configuration is only intended for showcasing this blog post, in the real world, we would not deploy a database with a publicly available port, but rather resort to a private network where only the application server instances are allowed to access the database. 
 
 ## Storage
 
-To ease daily operations, the terraform files for the server instance and the storage volumes are divided into two different terraform modules. This allows us to destroy and rebuild the whole instance without having to worry about our precious data volumes getting deleted by accident
+To ease daily operations, the terraform files for the server instance and the storage volumes are divided into two different terraform modules. This allows us to destroy and rebuild the whole instance without having to worry about our precious data volumes getting deleted by accident.
 
-The definition for the data volumes follows the already explained architecture with one volume for data and another volume for backup storage.
+The definition of the data volumes follows the already explained architecture with one volume for data and another volume for backup storage:
 
 <!-- snippet:terraform_data_volumes -->
 ```
@@ -428,7 +428,7 @@ resource "hcloud_volume" "backup" {
 
 ## Instance
 
-Now that the data volumes are set up in the instance definition we can lookup those volumes via:
+Now that the data volumes are set up in the instance definition we can reference those volumes like this:
 
 <!-- snippet:terraform_data_volumes_loookup -->
 ```
@@ -476,7 +476,7 @@ function mount_storage_data {
 
 <!-- /snippet:terraform_data_volumes_mount -->
 
-To simplify the instance provisioning we use bash function based templating to render the needed configuration files for starting the docker container on the instance. The docker container is started like in the test environment via docker compose. But contrarily to the test we do not used docker volumes for data storage, but the data volumes we mounted in the previous step:  
+To simplify the instance provisioning, we use bash function based templating to render the needed configuration files for starting the docker container on the instance. The docker container is started like in the test environment via docker-compose. But contrarily to the test, we do not use docker volumes for data storage, but the data volumes we mounted in the previous step:  
 
 <!-- snippet:docker_compose_config -->
 ```
@@ -499,7 +499,7 @@ EOF
 
 <!-- /snippet:docker_compose_config -->
 
-The docker compose start itself is triggered using a systemd unit (yes I know booo systemd). A little trick we use in this system unit is to pass the db instance id using the systemd specifier logic. This way we can generate an instance id agnostic systemd configuration like this:
+The docker-compose start itself is triggered using a systemd unit (yes, I know, booo systemd). A little trick we use in this systemd unit is to pass the db instance id using the systemd specifier logic. This way we can generate an instance id agnostic systemd configuration like this:
 
 <!-- snippet:rds_service_systemd_config -->
 ```
@@ -534,14 +534,14 @@ EOF
 
 <!-- /snippet:rds_service_systemd_config -->
 
-We write this file to `/etc/systemd/system/rds@.service`. Now when we enable and start this instance via systemctl:
+We write this file to `/etc/systemd/system/rds@.service`. Now, when we enable and start this instance via systemctl:
 
 ```
 systemctl enable rds@instance1
 systemctl start rds@instance1
 ```
 
-The `%i` in the system unit definition is replaced by the part after the `@`, so in this case `instance1`. We follow the same pattern for the backup service defined in  `/etc/systemd/system/rds-backup@.service`, only that this unit is way simpler because we just have to call the `/rds/bin/backup.sh` backup script inside the container:
+The `%i` in the system unit definition is replaced by the part after the `@`, so in this case `instance1`. We follow the same pattern for the backup service defined in `/etc/systemd/system/rds-backup@.service`, only that this unit is way simpler because we just have to call the `/rds/bin/backup.sh` backup script inside the container:
 
 <!-- snippet:rds_service_backup_systemd_config -->
 ```
@@ -588,7 +588,7 @@ EOF
 
 # Try it out
 
-If you want to try out what we just built, [https://github.com/pellepelster/hetzner-rds-postgres](https://github.com/pellepelster/hetzner-rds-postgres) not only contains all sources, but also a bash script with some tasks to build and test everything:
+If you want to try out what we built, [https://github.com/pellepelster/hetzner-rds-postgres](https://github.com/pellepelster/hetzner-rds-postgres) not only contains all sources, but also a bash script with some tasks to build and test everything:
 
 ```
 git clone --recurse-submodules https://github.com/pellepelster/hetzner-rds-postgres.git
@@ -600,13 +600,13 @@ To build the docker image run:
 ./do build
 ```
 
-and to run the tests (not surprisingly):
+and to run the tests (unsurprisingly):
 
 ```
 ./do test
 ```
 
-The deploy part is a little bit trickier, as you have to upload the docker images to a registry, the easiest way to do this os propably to fork the project on Github and use the docker registry provided by Github. Don't forget to change the configuration in the `do` file to point to your fork:
+The deploy part is a little bit trickier, as you have to upload the docker images to a registry, the easiest way to do this is propably to fork the project on Github and use the docker registry provided by Github. Don't forget to change the configuration in the `do` file to point to your fork:
 
 ```
 GITHUB_OWNER="pellepelster"
@@ -627,7 +627,7 @@ and
 
 # Where to go from here
 
-Now that we have a working solutions there are tons of possible improvements and features we might to tackle.
+Now that we have a working solution there are tons of possible improvements and features we might want to tackle.
 
-* The configuration of the service is rather static, therefore we have to redeploy every time we want to change a setting via an environment variable. A better solution would be to switch from gomplate to for example [consul-template](https://github.com/hashicorp/consul-template) and have the configuration dynamically managed by a key/value store like [consul](https://www.consul.io/) and/or [vault](https://www.vaultproject.io/). 
-* We have currently not set an archive retention policy which leeds to backups piling up until all space is exhausted
+* The configuration of the service is rather static, therefore we have to redeploy every time we want to change a setting via an environment variable. A better solution would be to switch from gomplate to, for example [consul-template](https://github.com/hashicorp/consul-template), and have the configuration dynamically managed by a key/value store like [consul](https://www.consul.io/) and/or [vault](https://www.vaultproject.io/). 
+* We have currently not set an archive retention policy which leads to backups piling up until all space is exhausted.
