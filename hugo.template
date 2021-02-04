@@ -1,0 +1,8 @@
+{{ if .IsFullFile }}
+{{`{{< github repository="pellepelster/vault-ssh-ca"`}} file="{{.Filename}}"  >}}{{.Filename}}{{`{{< /github >}}`}}
+{{ else }}
+{{`{{< github repository="pellepelster/vault-ssh-ca"`}} file="{{.Filename}}#L{{.Start}}-L{{.End}}"  >}}{{.Filename}}{{`{{< /github >}}`}}
+{{ end }}
+{{`{{< highlight go "" >}}`}}
+{{.Content}}
+{{`{{< / highlight >}}`}}

@@ -1,0 +1,23 @@
+version: "3"
+services:
+  rds-test1:
+    image: hetzner-rds-postgres
+    environment:
+      - "DB_INSTANCE_ID=test1"
+      - "DB_PASSWORD=password1"
+    ports:
+      - "5432"
+    volumes:
+      - "rds-data:/storage/data"
+      - "rds-backup:/storage/backup"
+
+  rds-test1-no-password:
+    image: hetzner-rds-postgres
+    environment:
+      - "DB_INSTANCE_ID=test1"
+    ports:
+      - "5432"
+
+volumes:
+  rds-data:
+  rds-backup:

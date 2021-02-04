@@ -1,0 +1,11 @@
+source 'https://rubygems.org'
+
+gem 'docker-api'
+gem 'docker-compose'
+gem 'faraday'
+gem 'rake'
+gem 'minitest'
+gem 'minitest-hooks'
+gem 'minitest-reporters'
+gem 'pg'
+gem 'rubocop'
