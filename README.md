@@ -1,3 +1,9 @@
+
+### This project was created as a code example for [this blog post](https://pelle.io/posts/hetzner-rds-postgres/)
+
+### The code is now part of the [Solidblocks Infrastructure](https://pellepelster.github.io/solidblocks/hetzner/) library with more features and proper integration tests
+
+---
 # Hetzner RDS Postgres
 
 An often overlooked alternative to the big players in the cloud market is the [Hetzner Cloud](https://www.hetzner.com/de/cloud), developed by the well known German hosting company Hetzner. 
